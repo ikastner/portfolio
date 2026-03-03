@@ -13,6 +13,7 @@ export default function HeroSection() {
   const subtitleRef = useRef<HTMLDivElement>(null)
   const ctaRef = useRef<HTMLDivElement>(null)
   const decorRef = useRef<HTMLDivElement>(null)
+  // Content is always visible — no GSAP entry animation that risks hiding it
 
   useEffect(() => {
     const section = sectionRef.current
@@ -23,48 +24,7 @@ export default function HeroSection() {
 
     if (!section || !title || !subtitle || !cta || !decor) return
 
-    // Safety: Ensure content is visible after a timeout even if animation fails
-    const safetyTimeout = setTimeout(() => {
-      gsap.set([title, subtitle, cta], { opacity: 1, y: 0 })
-      gsap.set(decor, { scale: 1, rotation: 0 })
-    }, 3000)
-
-    // Initial states for animation
-    gsap.set(title, { y: 100, opacity: 0 })
-    gsap.set(subtitle, { y: 50, opacity: 0 })
-    gsap.set(cta, { y: 30, opacity: 0 })
-    gsap.set(decor, { scale: 0, rotation: -180 })
-
-    // Entry animation timeline
-    const tl = gsap.timeline({ delay: 0.5 })
-
-    tl.to(title, {
-      y: 0,
-      opacity: 1,
-      duration: 1.2,
-      ease: 'power4.out',
-      onComplete: () => clearTimeout(safetyTimeout)
-    })
-    .to(subtitle, {
-      y: 0,
-      opacity: 1,
-      duration: 0.8,
-      ease: 'power3.out'
-    }, '-=0.6')
-    .to(cta, {
-      y: 0,
-      opacity: 1,
-      duration: 0.6,
-      ease: 'power2.out'
-    }, '-=0.4')
-    .to(decor, {
-      scale: 1,
-      rotation: 0,
-      duration: 1,
-      ease: 'back.out(1.7)'
-    }, '-=0.8')
-
-    // Scroll animation
+    // Scroll parallax only — no entry animation that could hide content
     const scrollTl = gsap.timeline({
       scrollTrigger: {
         trigger: section,
