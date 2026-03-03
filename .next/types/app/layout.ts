@@ -1,4 +1,4 @@
-// File: /Users/ik/Documents/Perso/dev/windsurf-bench/srg/app/layout.tsx
+// File: /Users/ik/Documents/Perso/dev/windsurf-bench/app/layout.tsx
 import * as entry from '../../../app/layout.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

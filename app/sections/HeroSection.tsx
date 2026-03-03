@@ -23,7 +23,13 @@ export default function HeroSection() {
 
     if (!section || !title || !subtitle || !cta || !decor) return
 
-    // Initial states
+    // Safety: Ensure content is visible after a timeout even if animation fails
+    const safetyTimeout = setTimeout(() => {
+      gsap.set([title, subtitle, cta], { opacity: 1, y: 0 })
+      gsap.set(decor, { scale: 1, rotation: 0 })
+    }, 3000)
+
+    // Initial states for animation
     gsap.set(title, { y: 100, opacity: 0 })
     gsap.set(subtitle, { y: 50, opacity: 0 })
     gsap.set(cta, { y: 30, opacity: 0 })
@@ -36,7 +42,8 @@ export default function HeroSection() {
       y: 0,
       opacity: 1,
       duration: 1.2,
-      ease: 'power4.out'
+      ease: 'power4.out',
+      onComplete: () => clearTimeout(safetyTimeout)
     })
     .to(subtitle, {
       y: 0,
