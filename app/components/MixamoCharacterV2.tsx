@@ -177,7 +177,13 @@ const CAMERA_RIG: Record<string, CameraRig> = {
 // ============================================
 // COMPOSANT PERSONNAGE
 // ============================================
-function MixamoCharacter({ scrollProgress }: { scrollProgress: number }) {
+function MixamoCharacter({ 
+  scrollProgress, 
+  onLoaded 
+}: { 
+  scrollProgress: number
+  onLoaded?: () => void 
+}) {
   const groupRef = useRef<THREE.Group>(null)
   const [model, setModel] = useState<THREE.Group | null>(null)
   const [animations, setAnimations] = useState<Record<string, THREE.AnimationClip>>({})
@@ -193,6 +199,7 @@ function MixamoCharacter({ scrollProgress }: { scrollProgress: number }) {
   const actionsRef = useRef<Record<string, THREE.AnimationAction>>({})
   const prevAnimRef = useRef<AnimationName>('hanging')
   const transitionAtRef = useRef(0)
+  const hasNotifiedRef = useRef(false)
   
   // ============================================
   // CHARGEMENT INITIAL
@@ -253,10 +260,17 @@ function MixamoCharacter({ scrollProgress }: { scrollProgress: number }) {
       
       setAnimations(loadedAnims)
       setIsLoading(false)
+      
+      // Notify parent that model is loaded
+      if (!hasNotifiedRef.current) {
+        hasNotifiedRef.current = true
+        console.log('[Parkour] Model fully loaded, notifying parent')
+        onLoaded?.()
+      }
     }
     
     loadCharacterAndAnimations()
-  }, [diffuseMap, normalMap, roughnessMap])
+  }, [diffuseMap, normalMap, roughnessMap, onLoaded])
   
   // ============================================
   // SETUP MIXER
@@ -567,7 +581,7 @@ function Particles() {
 // ============================================
 // CANVAS PRINCIPAL
 // ============================================
-export default function MixamoCharacterCanvas() {
+export default function MixamoCharacterCanvas({ onModelLoaded }: { onModelLoaded?: () => void }) {
   const [scrollProgress, setScrollProgress] = useState(0)
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -617,7 +631,7 @@ export default function MixamoCharacterCanvas() {
         
         {/* Character */}
         <Suspense fallback={null}>
-          <MixamoCharacter scrollProgress={scrollProgress} />
+          <MixamoCharacter scrollProgress={scrollProgress} onLoaded={onModelLoaded} />
         </Suspense>
         
         {/* Dynamic Camera */}

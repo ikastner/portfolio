@@ -19,6 +19,7 @@ gsap.registerPlugin(ScrollTrigger)
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true)
+  const [modelLoaded, setModelLoaded] = useState(false)
 
   useEffect(() => {
     // Initialize Lenis smooth scrolling
@@ -56,17 +57,22 @@ export default function Home() {
     ScrollTrigger.refresh()
   }
 
+  const handleModelLoaded = () => {
+    console.log('[Page] 3D Model loaded!')
+    setModelLoaded(true)
+  }
+
   return (
     <>
-      {/* Preloader */}
-      {isLoading && <Preloader onComplete={handlePreloaderComplete} />}
+      {/* Preloader - waits for both animation and 3D model */}
+      {isLoading && <Preloader onComplete={handlePreloaderComplete} modelLoaded={modelLoaded} />}
       
       <main className="relative">
         {/* Custom Cursor */}
         <CustomCursor />
 
         {/* WebGL Background - 3D Character with Mixamo animations */}
-        <MixamoCharacterCanvas />
+        <MixamoCharacterCanvas onModelLoaded={handleModelLoaded} />
 
         {/* Scan line effect */}
         <div className="scan-line" />
